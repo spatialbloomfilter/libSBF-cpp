@@ -370,13 +370,13 @@ void SBF::SaveToDisk(std::string path, int mode)
 // int area         the area label
 void SBF::Insert(char *string, int size, int area)
 {
-    char buffer[size];
+    char* buffer = new char[size];
 
     // We allow a maximum SBF mapping of 32 bit (resulting in 2^32 cells).
     // Thus, the hash digest is limited to the first four bytes.
     unsigned char digest32[SBF::MAX_BYTE_MAPPING];
 
-    unsigned char digest[this->HASH_digest_length];
+    unsigned char* digest = new unsigned char[this->HASH_digest_length];
 
     // Computes the hash digest of the input 'HASH_number' times; each
     // iteration combines the input char array with a different hash salt
@@ -386,7 +386,7 @@ void SBF::Insert(char *string, int size, int area)
             buffer[j] = (char)(string[j]^this->HASH_salt[k][j]);
         }
 
-        this->Hash(buffer, size, (unsigned char*)&digest);
+        this->Hash(buffer, size, (unsigned char*)digest);
 
         // Truncates the digest after the first 32 bits (see above)
         for(int i = 0; i < SBF::MAX_BYTE_MAPPING; i++){
@@ -408,6 +408,8 @@ void SBF::Insert(char *string, int size, int area)
     this->members++;
     this->AREA_members[area]++;
 
+	delete[] buffer;
+	delete[] digest;
 }
 
 // Verifies weather the input element belongs to one of the mapped sets.
@@ -417,7 +419,7 @@ void SBF::Insert(char *string, int size, int area)
 // int size         length of the element
 int SBF::Check(char *string, int size)
 {
-    char buffer[size];
+    char* buffer = new char[size];
     int area = 0;
     int current_area = 0;
 
@@ -425,7 +427,7 @@ int SBF::Check(char *string, int size)
     // Thus, the hash digest is limited to the first four bytes.
     unsigned char digest32[SBF::MAX_BYTE_MAPPING];
 
-    unsigned char digest[this->HASH_digest_length];
+    unsigned char* digest = new unsigned char[this->HASH_digest_length];
 
     // Computes the hash digest of the input 'HASH_number' times; each
     // iteration combines the input char array with a different hash salt
@@ -435,7 +437,7 @@ int SBF::Check(char *string, int size)
             buffer[j] = (char)(string[j]^this->HASH_salt[k][j]);
         }
 
-        this->Hash(buffer, size, (unsigned char*)&digest);
+        this->Hash(buffer, size, (unsigned char*)digest);
 
         // Truncates the digest to the first 32 bits
         for(int i = 0; i < SBF::MAX_BYTE_MAPPING; i++){
@@ -460,6 +462,8 @@ int SBF::Check(char *string, int size)
         else if(current_area < area) area = current_area;
     }
 
+	delete[] buffer;
+	delete[] digest;
     return area;
 }
 
