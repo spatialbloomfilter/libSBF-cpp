@@ -35,5 +35,5 @@ The source code is released under the terms of the GNU Lesser General Public Lic
 
 ## Acknowledgements ##
 This project uses, where possible, existing libraries. In particular:
-- We use the OpenSSL implementation of hash functions, copyright of The OpenSSL Project. Please refer to [https://www.openssl.org/source/license.txt] for OpenSSL project licence details.
+- We use the OpenSSL implementation of hash functions, copyright of The OpenSSL Project. Please refer to https://www.openssl.org/source/license.txt for OpenSSL project licence details.
 - The functions implementing base64 encoding and decoding (provided in base64.cpp and base64.h) was written by [René Nyffenegger](mailto:rene.nyffenegger@adp-gmbh.ch). A full copyright statement is provided within each file.
