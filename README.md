@@ -14,7 +14,7 @@ The libSBF-cpp repository contains the C++ implementation of the SBF data struct
 
 For more details on the implementation, and how to use the library please refer to the [homepage](http://sbf.csr.unibo.it/ "SBF project homepage") of the project.
 
-A [sample application](test-app/) that uses the library and implements its main functions is also provided. The application allows users to create an SBF (calculating independently some parameters, such as the number of hashes to be used), insert elements from a CSV file into the filter, and test membership of elements on the filter. The application can print (to the standard output or a file) both the filter and its propreties.
+A [sample application](test-app/) that uses the library and implements its main functions is also provided. The application allows users to create an SBF (calculating independently some parameters, such as the number of hashes to be used), insert elements from a CSV file into the filter, and test membership of elements on the filter. The application can print (to the standard output or a file) both the filter and its properties.
 
 The library and the test application can be tested using the [sample datasets](https://github.com/spatialbloomfilter/libSBF-testdatasets "libSBF-testdatasets") provided in a separate repository.
 
