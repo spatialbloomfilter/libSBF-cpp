@@ -18,7 +18,7 @@ A [sample application](test-app/) that uses the library and implements its main 
 
 The library and the test application can be tested using the [sample datasets](https://github.com/spatialbloomfilter/libSBF-testdatasets "libSBF-testdatasets") provided in a separate repository.
 
-A [Python implementation](https://github.com/spatialbloomfilter/libSFB-python "libSFB-python") is also available. 
+A [Python implementation](https://github.com/spatialbloomfilter/libSBF-python "libSBF-python") is also available. 
 
 ## Bibliography ##
 The SBFs have been proposed in the following research papers:
