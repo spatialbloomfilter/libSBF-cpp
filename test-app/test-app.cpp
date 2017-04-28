@@ -143,7 +143,8 @@ int main() {
 		std::cout << "Enter the print mode to use:" << std::endl;
 		std::cout << "1 (prints filter information to the standard output)" << std::endl;
 		std::cout << "2 (prints filter information and cells values to the standard output)" << std::endl;
-		std::cout << "3 (save both filter and related meta data to disk)" << std::endl;
+		std::cout << "3 (save filter statistics and meta data to disk)" << std::endl;
+		std::cout << "4 (save both filter and related meta data to disk)" << std::endl;
 		std::cout << "(press ENTER to ignore)..." << std::endl;
 		getline(std::cin, input);
 
@@ -151,7 +152,7 @@ int main() {
 		else {
 			std::istringstream istr(input);
 			istr >> print_mode;
-			if (print_mode != 1 && print_mode != 2 && print_mode != 3) print_mode = 0;
+			if (print_mode != 1 && print_mode != 2 && print_mode != 3 && print_mode != 4) print_mode = 0;
 			break;
 		}
 
@@ -225,7 +226,8 @@ int main() {
 	//prints filter to the standard output or saves it to disk
 	if (print_mode == 1) myFilter->PrintFilter(0);
 	if (print_mode == 2) myFilter->PrintFilter(1);
-	if (print_mode == 3) {
+	if (print_mode == 3) myFilter->SaveToDisk("stats" + buf + ".csv", 1);
+	if (print_mode == 4) {
 		myFilter->SaveToDisk("filter" + buf + ".csv", 0);
 		myFilter->SaveToDisk("stats" + buf + ".csv", 1);
 	}
@@ -258,7 +260,7 @@ int main() {
 		}
 		printf("Well recognised: %d\n", well_recognised);
 		printf("Elements assigned to a wrong set: %d\n", exchanged_elements);
-		printf("Exchange rate: %f\n", (float)exchanged_elements / (float)n);
+		printf("Exchange rate: %.5f\n", (float)exchanged_elements / (float)n);
 		myfile.close();
 	}
 	else {
@@ -304,7 +306,7 @@ int main() {
 			}
 			printf("Well recognised: %d\n", well_recognised);
 			printf("False positives: %d\n", false_positives);
-			printf("False positives rate: %f\n", (float)false_positives / (float)nver);
+			printf("False positives rate: %.5f\n", (float)false_positives / (float)nver);
 			myfile.close();
 		}
 		else {

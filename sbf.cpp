@@ -264,8 +264,8 @@ void SBF::PrintFilter(int mode)
     printf("Filter details:\n");
     printf("Number of cells: %d\n",this->cells);
     printf("Size in Bytes: %d\n",this->size);
-    printf("Filter sparsity: %f\n",this->GetFilterSparsity());
-    printf("Filter fpp: %f\n",this->GetFilterFpp());
+    printf("Filter sparsity: %.5f\n",this->GetFilterSparsity());
+    printf("Filter fpp: %.5f\n",this->GetFilterFpp());
     printf("Number of mapped elements: %d\n",this->members);
     printf("Number of hash collisions: %d\n",this->collisions);
 
@@ -301,8 +301,8 @@ void SBF::PrintFilter(int mode)
 
     printf("\nEmersion and Fpp:\n");
     for(int j = 1; j < this->AREA_number+1; j++){
-        if(this->GetAreaFlotation(j)) printf("Area %d: emersion %f, flotation safe, fpp %f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
-        else printf("Area %d: emersion %f, flotation unsafe, fpp %f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
+        if(this->GetAreaFlotation(j)) printf("Area %d: emersion %.5f, flotation safe, fpp %.5f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
+        else printf("Area %d: emersion %.5f, flotation unsafe, fpp %.5f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
         printf("\n");
     }
     printf("\n");
@@ -317,6 +317,9 @@ void SBF::SaveToDisk(std::string path, int mode)
     std::ofstream myfile;
 
     myfile.open (path.c_str());
+
+	myfile.setf(std::ios_base::fixed, std::ios_base::floatfield);
+	myfile.precision(5);
 
     if(mode){
 
@@ -395,7 +398,15 @@ void SBF::Insert(char *string, int size, int area)
 
         // Copies the truncated digest (one byte at a time) in an integer
         // variable (endian independent)
-        unsigned int digest_index = (digest32[0] << 24) | (digest32[1] << 16) | (digest32[2] << 8) | digest32[3];
+		unsigned int digest_index;
+		if (this->BIG_end) {
+			digest_index = (digest32[0] << 24) | (digest32[1] << 16) | (digest32[2] << 8) | digest32[3];
+		}
+		else
+		{
+			digest_index = (digest32[3] << 24) | (digest32[2] << 16) | (digest32[1] << 8) | digest32[0];
+		}
+        
 
         // Shifts bits in order to preserve only the first 'bit_mapping'
         // least significant bits
@@ -444,9 +455,16 @@ int SBF::Check(char *string, int size)
              digest32[i] = digest[i];
         }
 
-        // Copies the truncated digest (one byte at a time) in an integer
-        // variable (endian independent)
-        unsigned int digest_index = (digest32[0] << 24) | (digest32[1] << 16) | (digest32[2] << 8) | digest32[3];
+		// Copies the truncated digest (one byte at a time) in an integer
+		// variable (endian independent)
+		unsigned int digest_index;
+		if (this->BIG_end) {
+			digest_index = (digest32[0] << 24) | (digest32[1] << 16) | (digest32[2] << 8) | digest32[3];
+		}
+		else
+		{
+			digest_index = (digest32[3] << 24) | (digest32[2] << 16) | (digest32[1] << 8) | digest32[0];
+		}
 
         // Shifts bits in order to preserve only the first 'bit_mapping' least
         // significant bits

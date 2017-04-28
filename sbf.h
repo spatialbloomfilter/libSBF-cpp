@@ -37,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "linux/libexport.h"
 #endif
 
+#include "end.h"
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -69,6 +71,7 @@ namespace sbf {
 		int *AREA_cells;
 		int *AREA_self_collisions;
 		float *AREA_fpp;
+		int BIG_end;
 
 		// Private methods (commented in the sbf.cpp)
 		void SetCell(unsigned int index, int area);
@@ -123,6 +126,9 @@ namespace sbf {
 			if (AREA_number <= 0 || AREA_number > MAX_AREA_NUMBER) throw std::invalid_argument("Invalid number of areas.");
 			if (HASH_number <= 0 || HASH_number > MAX_HASH_NUMBER) throw std::invalid_argument("Invalid number of hash runs.");
 			if (salt_path.length() == 0) throw std::invalid_argument("Invalid hash salt path.");
+
+			// Checks whether the execution is being performed on a big endian or little endian machine
+			this->BIG_end = is_big_endian();
 
 			// Defines the number of bytes required for each cell depending on AREA_number
 			// In order to reduce the memory footprint of the filter, we use 1 byte 
