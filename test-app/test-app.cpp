@@ -41,7 +41,7 @@ int main() {
 	int len, line_count, area, area_check, n, narea, nver;
 	int well_recognised, false_positives, exchanged_elements;
 	char* element;
-	sbf::SBF* myFilter;
+	sbf::SBF* myFilter = NULL;
 
 	/* ****************************** SETTINGS ****************************** */
 
@@ -90,7 +90,7 @@ int main() {
 
 	std::string input;
 	//asks for construction dataset file (mandatory)
-	std::cout << "Enter the name of the construction dataset (like area-elements-unif.csv)..." << std::endl;
+	std::cout << "Enter the name of the construction dataset (like area-element-unif.csv)..." << std::endl;
 	std::cin >> construction_dataset;
 	std::cin.ignore();
 

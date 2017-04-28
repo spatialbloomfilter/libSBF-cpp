@@ -310,8 +310,8 @@ void SBF::PrintFilter(int mode)
 
 
 // Prints the filter and related statistics onto a CSV file (path)
-// mode: 0    writes SBF metadata (CSV: key;value)
-// mode: 1    writes SBF cells (CSV: value)
+// mode: 1    writes SBF metadata (CSV: key;value)
+// mode: 0    writes SBF cells (CSV: value)
 void SBF::SaveToDisk(std::string path, int mode)
 {
     std::ofstream myfile;
