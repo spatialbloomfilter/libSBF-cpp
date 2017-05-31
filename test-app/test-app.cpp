@@ -37,9 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int main() {
 
 	std::ifstream myfile;
-	std::string line, a, member;
+	std::string line, a, member, path;
+	std::ofstream rate_file;
 	int len, line_count, area, area_check, n, narea, nver;
-	int well_recognised, false_positives, exchanged_elements;
+	int well_recognised, false_positives, iser;
+	int* area_iser;
+	int* area_fp;
 	char* element;
 	sbf::SBF* myFilter = NULL;
 
@@ -221,7 +224,9 @@ int main() {
 	}
 
 	//calculates filter's probabilistic properties
+	myFilter->SetAPrioriAreaFpp();
 	myFilter->SetAreaFpp();
+	myFilter->SetAPrioriAreaIsep();
 
 	//prints filter to the standard output or saves it to disk
 	if (print_mode == 1) myFilter->PrintFilter(0);
@@ -235,7 +240,11 @@ int main() {
 
 	//operates a self check upon the filter (i.e. runs the Check method for each
 	//of the already mapped elements)
-	well_recognised = 0, exchanged_elements = 0;
+	well_recognised = 0, iser = 0;
+	area_iser = new int[narea+1];
+	for (int a = 0; a < narea + 1; a++) {
+		area_iser[a] = 0;
+	}
 	myfile.open(construction_dataset.c_str());
 
 	if (myfile.is_open()) {
@@ -254,13 +263,30 @@ int main() {
 
 			if (area == area_check) well_recognised++;
 			else {
-				exchanged_elements++;
+				iser++;
+				area_iser[area]++;
 			}
 
 		}
-		printf("Well recognised: %d\n", well_recognised);
-		printf("Elements assigned to a wrong set: %d\n", exchanged_elements);
-		printf("Exchange rate: %.5f\n", (float)exchanged_elements / (float)n);
+		printf("Elements assigned to the correct set: %d\n", well_recognised);
+		printf("Inter-set errors: %d\n", iser);
+		printf("Inter-set errors rate: %.5f\n", (float)iser / (float)n);
+
+
+		if (print_mode == 3 || print_mode == 4) {
+		path = "ise" + buf + ".csv";
+		rate_file.open(path.c_str());
+		rate_file.setf(std::ios_base::fixed, std::ios_base::floatfield);
+		rate_file.precision(5);
+		// area-related parameters:
+		// area,inter-set errors,inter-set error rate
+		rate_file << "area" << ";" << "errors" << ";" << "rate" << std::endl;
+			for (int j = 1; j < narea + 1; j++) {
+				rate_file << j << ";" << area_iser[j] << ";" << (float)area_iser[j] / (float)myFilter->GetAreaMembers(j) << std::endl;
+			}
+			rate_file.close();
+		}
+
 		myfile.close();
 	}
 	else {
@@ -288,6 +314,10 @@ int main() {
 
 		//operates a verification using non members dataset
 		well_recognised = 0, false_positives = 0;
+		area_fp = new int[narea + 1];
+		for (int a = 0; a < narea + 1; a++) {
+			area_fp[a] = 0;
+		}
 		myfile.open(verification_dataset.c_str());
 
 		if (myfile.is_open()) {
@@ -301,12 +331,31 @@ int main() {
 				memcpy(element, line.c_str(), len);
 				area = myFilter->Check(element, len);
 
-				if (area == 0)well_recognised++;
-				else false_positives++;
+				if (area == 0) well_recognised++;
+				else
+				{
+					false_positives++;
+					area_fp[area]++;
+				}
 			}
-			printf("Well recognised: %d\n", well_recognised);
+			printf("True negatives: %d\n", well_recognised);
 			printf("False positives: %d\n", false_positives);
 			printf("False positives rate: %.5f\n", (float)false_positives / (float)nver);
+
+			if (print_mode == 3 || print_mode == 4) {
+				path = "fp" + buf + ".csv";
+				rate_file.open(path.c_str());
+				rate_file.setf(std::ios_base::fixed, std::ios_base::floatfield);
+				rate_file.precision(5);
+				// area-related parameters:
+				// area,false positives,false positives rate
+				rate_file << "area" << ";" << "false positives" << ";" << "rate" << std::endl;
+				for (int j = 1; j < narea + 1; j++) {
+					rate_file << j << ";" << area_fp[j] << ";" << (float)area_fp[j] / (float)nver << std::endl;
+				}
+				rate_file.close();
+			}
+
 			myfile.close();
 		}
 		else {

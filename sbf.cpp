@@ -265,6 +265,7 @@ void SBF::PrintFilter(int mode)
     printf("Number of cells: %d\n",this->cells);
     printf("Size in Bytes: %d\n",this->size);
     printf("Filter sparsity: %.5f\n",this->GetFilterSparsity());
+	printf("Filter a-priori fpp: %.5f\n", this->GetFilterAPrioriFpp());
     printf("Filter fpp: %.5f\n",this->GetFilterFpp());
     printf("Number of mapped elements: %d\n",this->members);
     printf("Number of hash collisions: %d\n",this->collisions);
@@ -299,10 +300,9 @@ void SBF::PrintFilter(int mode)
         printf("\n");
     }
 
-    printf("\nEmersion and Fpp:\n");
+    printf("\nEmersion, Fpp, Isep:\n");
     for(int j = 1; j < this->AREA_number+1; j++){
-        if(this->GetAreaFlotation(j)) printf("Area %d: emersion %.5f, flotation safe, fpp %.5f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
-        else printf("Area %d: emersion %.5f, flotation unsafe, fpp %.5f",j,this->GetAreaEmersion(j),this->AREA_fpp[j]);
+        printf("Area %d: emersion %.5f, a-priori fpp %.5f, fpp %.5f, a-priori isep %.5f",j,this->GetAreaEmersion(j),this->AREA_a_priori_fpp[j],this->AREA_fpp[j],this->AREA_a_priori_isep[j]);
         printf("\n");
     }
     printf("\n");
@@ -333,11 +333,13 @@ void SBF::SaveToDisk(std::string path, int mode)
         myfile << "members" << ";" << this->members << std::endl;
         myfile << "collisions" << ";" << this->collisions << std::endl;
         myfile << "sparsity" << ";" << this->GetFilterSparsity() << std::endl;
+		myfile << "a-priori fpp" << ";" << this->GetFilterAPrioriFpp() << std::endl;
         myfile << "fpp" << ";" << this->GetFilterFpp() << std::endl;
         // area-related parameters:
-        // area,members,self-collisions,cells,emersion,flotation,fpp
+        // area,members,self-collisions,cells,emersion,a-priori fpp,fpp,a-priori isep
+		myfile << "area" << ";" << "members" << ";" << "self-collisions" << ";" << "cells" << ";" << "emersion" << ";" << "a-priori fpp" << ";" << "fpp" << ";" << "a-priori isep" << std::endl;
         for(int j = 1; j < this->AREA_number+1; j++){
-            myfile << j << ";" << this->AREA_members[j] << ";" << this->AREA_self_collisions[j] << ";" << this->AREA_cells[j] << ";" << this->GetAreaEmersion(j) << ";" << this->GetAreaFlotation(j) << ";" << this->AREA_fpp[j] << std::endl;
+            myfile << j << ";" << this->AREA_members[j] << ";" << this->AREA_self_collisions[j] << ";" << this->AREA_cells[j] << ";" << this->GetAreaEmersion(j) << ";" << this->AREA_a_priori_fpp[j] << ";" << this->AREA_fpp[j] << ";" << this->AREA_a_priori_isep[j] << std::endl;
         }
 
     }
@@ -486,10 +488,61 @@ int SBF::Check(char *string, int size)
 }
 
 
+// Computes a-priori area-specific inter-set error probability (a_priori_isep)
+void SBF::SetAPrioriAreaIsep()
+{
+	double p1;
+	int nfill;
+
+
+	for (int i = this->AREA_number; i>0; i--) {
+		nfill = 0;
+
+		for (int j = i+1; j <= this->AREA_number; j++) {
+			nfill += this->AREA_members[j];
+		}
+
+		p1 = (double)(1 - 1 / (double)this->cells);
+		p1 = (double)(1 - (double)pow(p1, this->HASH_number*nfill));
+		p1 = (double)pow(p1, this->HASH_number);
+
+		this->AREA_a_priori_isep[i] = (float)p1;
+		
+	}
+}
+
+
+// Computes a-priori area-specific false positives probability (a_priori_fpp)
+void SBF::SetAPrioriAreaFpp()
+{
+	double p;
+	int c;
+
+	for (int i = this->AREA_number; i>0; i--) {
+		c = 0;
+
+		for (int j = i; j <= this->AREA_number; j++) {
+			c += this->AREA_members[j];
+		}
+
+		p = (double)(1 - 1 / (double)this->cells);
+		p = (double)(1 - (double)pow(p, this->HASH_number*c));
+		p = (double)pow(p, this->HASH_number);
+
+		this->AREA_a_priori_fpp[i] = (float)p;
+
+		for (int j = i; j<this->AREA_number; j++) {
+			this->AREA_a_priori_fpp[i] -= this->AREA_a_priori_fpp[j + 1];
+		}
+		if (AREA_a_priori_fpp[i]<0) AREA_a_priori_fpp[i] = 0;
+	}
+}
+
+
 // Computes a-posteriori area-specific false positives probability (fpp)
 void SBF::SetAreaFpp()
 {
-    float p;
+    double p;
     int c;
 
     for(int i = this->AREA_number; i>0; i--){
@@ -499,14 +552,23 @@ void SBF::SetAreaFpp()
             c += this->AREA_cells[j];
         }
 
-        p = (float)c/(float)this->cells;
-        this->AREA_fpp[i] = (float)pow(p,this->HASH_number);
+        p = (double)c/(double)this->cells;
+        p = (double)pow(p,this->HASH_number);
+
+		this->AREA_fpp[i] = (float)p;
 
         for(int j=i; j<this->AREA_number; j++){
             this->AREA_fpp[i] -= this->AREA_fpp[j+1];
         }
         if(AREA_fpp[i]<0) AREA_fpp[i]=0;
     }
+}
+
+
+// Returns the number of inserted elements for the input area
+int SBF::GetAreaMembers(int area)
+{
+	return this->AREA_members[area];
 }
 
 
@@ -524,21 +586,35 @@ float SBF::GetFilterSparsity()
 }
 
 
+// Returns the a-priori false positive probability over the entire filter
+// (i.e. not area-specific)
+float SBF::GetFilterAPrioriFpp()
+{
+	double p;
+	
+	p = (double)(1 - 1 / (double)this->cells);
+	p = (double)(1 - (double)pow(p, this->HASH_number*this->members));
+	p = (double)pow(p, this->HASH_number);
+
+	return (float)p;
+}
+
+
 // Returns the a-posteriori false positive probability over the entire filter
 // (i.e. not area-specific)
 float SBF::GetFilterFpp()
 {
-    float p,fpp;
+	double p;
     int c = 0;
     // Counts non-zero cells
     for(int i = 1; i < this->AREA_number+1; i++){
         c += this->AREA_cells[i];
     }
-    p = (float)c/(float)this->cells;
+    p = (double)c/(double)this->cells;
 
-    fpp = (float)(pow(p,this->HASH_number));
+    p = (double)(pow(p,this->HASH_number));
 
-    return fpp;
+    return (float)p;
 }
 
 // Returns the emersion value for the input area
@@ -555,17 +631,6 @@ float SBF::GetAreaEmersion(int area)
 }
 
 
-// Returns the flotation value for the input area. TRUE if it is not possible
-// for an element belonging to the input area to be recognized as belonging to a
-// different area, FALSE if collisions may cause this to happen
-bool SBF::GetAreaFlotation(int area)
-{
-
-    if((this->AREA_members[area]==0) || (this->HASH_number==0)) return true;
-    else{
-        return (this->AREA_members[area]*this->HASH_number) - this->AREA_self_collisions[area] - this->AREA_cells[area] < this->HASH_number;
-    }
-}
 
 
 } //namespace sbf

@@ -70,7 +70,9 @@ namespace sbf {
 		int *AREA_members;
 		int *AREA_cells;
 		int *AREA_self_collisions;
+		float *AREA_a_priori_fpp;
 		float *AREA_fpp;
+		float *AREA_a_priori_isep;
 		int BIG_end;
 
 		// Private methods (commented in the sbf.cpp)
@@ -176,6 +178,8 @@ namespace sbf {
 			this->AREA_cells = new int[this->AREA_number + 1];
 			this->AREA_self_collisions = new int[this->AREA_number + 1];
 			this->AREA_fpp = new float[this->AREA_number + 1];
+			this->AREA_a_priori_fpp = new float[this->AREA_number + 1];
+			this->AREA_a_priori_isep = new float[this->AREA_number + 1];
 
 			// Parameter initializations
 			this->members = 0;
@@ -185,6 +189,8 @@ namespace sbf {
 				this->AREA_cells[a] = 0;
 				this->AREA_self_collisions[a] = 0;
 				this->AREA_fpp[a] = -1;
+				this->AREA_a_priori_fpp[a] = -1;
+				this->AREA_a_priori_isep[a] = -1;
 			}
 		}
 
@@ -197,6 +203,8 @@ namespace sbf {
 			delete[] AREA_cells;
 			delete[] AREA_self_collisions;
 			delete[] AREA_fpp;
+			delete[] AREA_a_priori_fpp;
+			delete[] AREA_a_priori_isep;
 			for (int j = 0; j<this->HASH_number; j++) {
 				delete[] HASH_salt[j];
 			}
@@ -209,11 +217,14 @@ namespace sbf {
 		void SaveToDisk(std::string path, int mode);
 		void Insert(char *string, int size, int area);
 		int Check(char *string, int size);
+		int GetAreaMembers(int area);
 		float GetFilterSparsity();
 		float GetFilterFpp();
+		float GetFilterAPrioriFpp();
 		void SetAreaFpp();
+		void SetAPrioriAreaFpp();
+		void SetAPrioriAreaIsep();
 		float GetAreaEmersion(int area);
-		bool GetAreaFlotation(int area);
 	};
 
 } //namespace sbf

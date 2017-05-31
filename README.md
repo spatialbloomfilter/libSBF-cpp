@@ -9,7 +9,7 @@ Spatial Bloom Filters have been first proposed for use in location-privacy appli
 
 The libSBF-cpp repository contains the C++ implementation of the SBF data structure. The SBF class is provided, as well as various methods for managing the filter:
 - once the filter is constructed, the user can insert elements into it through the `Insert` method. The `Check` method, on the contrary, is used to verify weather an element belongs to one of the mapped sets.
-- methods `SetAreaFpp`, `GetFilterSparsity`, `GetFilterFpp`, `GetAreaEmersion` and `GetAreaFlotation` allow to compute and return several probabilistic properties of the constructed filter.
+- methods `SetAreaFpp`, `GetFilterSparsity`, `GetFilterFpp` and `GetAreaEmersion` allow to compute and return several probabilistic properties of the constructed filter.
 - finally, two methods are provided to print out the filter: `PrintFilter` prints the filter and related statistics to the standard output whereas `SaveToDisk` writes the filter onto a CSV file.
 
 For more details on the implementation, and how to use the library please refer to the [homepage](http://sbf.csr.unibo.it/ "SBF project homepage") of the project.
