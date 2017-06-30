@@ -68,11 +68,13 @@ namespace sbf {
 		int collisions;
 		int AREA_number;
 		int *AREA_members;
+		float *AREA_expected_cells;
 		int *AREA_cells;
 		int *AREA_self_collisions;
 		float *AREA_a_priori_fpp;
 		float *AREA_fpp;
 		float *AREA_a_priori_isep;
+		float *AREA_isep;
 		int BIG_end;
 
 		// Private methods (commented in the sbf.cpp)
@@ -176,8 +178,10 @@ namespace sbf {
 			// Memory allocations for area related parameters
 			this->AREA_members = new int[this->AREA_number + 1];
 			this->AREA_cells = new int[this->AREA_number + 1];
+			this->AREA_expected_cells = new float[this->AREA_number + 1];
 			this->AREA_self_collisions = new int[this->AREA_number + 1];
 			this->AREA_fpp = new float[this->AREA_number + 1];
+			this->AREA_isep = new float[this->AREA_number + 1];
 			this->AREA_a_priori_fpp = new float[this->AREA_number + 1];
 			this->AREA_a_priori_isep = new float[this->AREA_number + 1];
 
@@ -187,8 +191,10 @@ namespace sbf {
 			for (int a = 0; a < this->AREA_number + 1; a++) {
 				this->AREA_members[a] = 0;
 				this->AREA_cells[a] = 0;
+				this->AREA_expected_cells[a] = -1;
 				this->AREA_self_collisions[a] = 0;
 				this->AREA_fpp[a] = -1;
+				this->AREA_isep[a] = -1;
 				this->AREA_a_priori_fpp[a] = -1;
 				this->AREA_a_priori_isep[a] = -1;
 			}
@@ -201,8 +207,10 @@ namespace sbf {
 			delete[] filter;
 			delete[] AREA_members;
 			delete[] AREA_cells;
+			delete[] AREA_expected_cells;
 			delete[] AREA_self_collisions;
 			delete[] AREA_fpp;
+			delete[] AREA_isep;
 			delete[] AREA_a_priori_fpp;
 			delete[] AREA_a_priori_isep;
 			for (int j = 0; j<this->HASH_number; j++) {
@@ -223,7 +231,10 @@ namespace sbf {
 		float GetFilterAPrioriFpp();
 		void SetAreaFpp();
 		void SetAPrioriAreaFpp();
+		void SetAreaIsep();
 		void SetAPrioriAreaIsep();
+		void SetExpectedAreaCells();
+		float GetExpectedAreaEmersion(int area);
 		float GetAreaEmersion(int area);
 	};
 

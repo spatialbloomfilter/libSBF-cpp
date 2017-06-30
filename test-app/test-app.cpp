@@ -227,6 +227,8 @@ int main() {
 	myFilter->SetAPrioriAreaFpp();
 	myFilter->SetAreaFpp();
 	myFilter->SetAPrioriAreaIsep();
+	myFilter->SetAreaIsep();
+	myFilter->SetExpectedAreaCells();
 
 	//prints filter to the standard output or saves it to disk
 	if (print_mode == 1) myFilter->PrintFilter(0);
