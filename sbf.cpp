@@ -297,7 +297,7 @@ void SBF::PrintFilter(int mode)
     printf("Area-related parameters:\n");
     for(int j = 1; j < this->AREA_number+1; j++){
         potential_elements = (this->AREA_members[j]*this->HASH_number)-this->AREA_self_collisions[j];
-        printf("Area %d: %d members, %.5f expected cells, %d cells out of %d potential (%d self-collisions)",j,this->AREA_members[j],this->AREA_expected_cells[j],this->AREA_cells[j],potential_elements,this->AREA_self_collisions[j]);
+        printf("Area %d: %d members, %d expected cells, %d cells out of %d potential (%d self-collisions)",j,this->AREA_members[j],this->AREA_expected_cells[j],this->AREA_cells[j],potential_elements,this->AREA_self_collisions[j]);
         printf("\n");
     }
 
@@ -560,9 +560,9 @@ void SBF::SetExpectedAreaCells()
 		p2 = (double)pow(p1, this->HASH_number*nfill);
 		p1 = (double)(1 - (double)pow(p1, this->HASH_number*this->AREA_members[i]));
 
-		p1 = (double)this->cells*p1*p2;
+		p1 = (double)(this->cells*p1*p2);
 
-		this->AREA_expected_cells[i] = (float)p1;
+		this->AREA_expected_cells[i] = (int)round(p1);
 
 	}
 }

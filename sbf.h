@@ -69,7 +69,7 @@ namespace sbf {
 		float safeness;
 		int AREA_number;
 		int *AREA_members;
-		float *AREA_expected_cells;
+		int *AREA_expected_cells;
 		int *AREA_cells;
 		int *AREA_self_collisions;
 		float *AREA_a_priori_fpp;
@@ -180,7 +180,7 @@ namespace sbf {
 			// Memory allocations for area related parameters
 			this->AREA_members = new int[this->AREA_number + 1];
 			this->AREA_cells = new int[this->AREA_number + 1];
-			this->AREA_expected_cells = new float[this->AREA_number + 1];
+			this->AREA_expected_cells = new int[this->AREA_number + 1];
 			this->AREA_self_collisions = new int[this->AREA_number + 1];
 			this->AREA_fpp = new float[this->AREA_number + 1];
 			this->AREA_isep = new float[this->AREA_number + 1];
