@@ -66,6 +66,7 @@ namespace sbf {
 		int HASH_digest_length;
 		int members;
 		int collisions;
+		float safeness;
 		int AREA_number;
 		int *AREA_members;
 		float *AREA_expected_cells;
@@ -75,6 +76,7 @@ namespace sbf {
 		float *AREA_fpp;
 		float *AREA_a_priori_isep;
 		float *AREA_isep;
+		float *AREA_a_priori_safep;
 		int BIG_end;
 
 		// Private methods (commented in the sbf.cpp)
@@ -184,6 +186,7 @@ namespace sbf {
 			this->AREA_isep = new float[this->AREA_number + 1];
 			this->AREA_a_priori_fpp = new float[this->AREA_number + 1];
 			this->AREA_a_priori_isep = new float[this->AREA_number + 1];
+			this->AREA_a_priori_safep = new float[this->AREA_number + 1];
 
 			// Parameter initializations
 			this->members = 0;
@@ -197,6 +200,7 @@ namespace sbf {
 				this->AREA_isep[a] = -1;
 				this->AREA_a_priori_fpp[a] = -1;
 				this->AREA_a_priori_isep[a] = -1;
+				this->AREA_a_priori_safep[a] = -1;
 			}
 		}
 
@@ -213,6 +217,7 @@ namespace sbf {
 			delete[] AREA_isep;
 			delete[] AREA_a_priori_fpp;
 			delete[] AREA_a_priori_isep;
+			delete[] AREA_a_priori_safep;
 			for (int j = 0; j<this->HASH_number; j++) {
 				delete[] HASH_salt[j];
 			}

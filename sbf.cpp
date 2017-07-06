@@ -267,6 +267,7 @@ void SBF::PrintFilter(int mode)
     printf("Filter sparsity: %.5f\n",this->GetFilterSparsity());
 	printf("Filter a-priori fpp: %.5f\n", this->GetFilterAPrioriFpp());
     printf("Filter fpp: %.5f\n",this->GetFilterFpp());
+	printf("Filter a-priori safeness probability: %.5f\n", this->safeness);
     printf("Number of mapped elements: %d\n",this->members);
     printf("Number of hash collisions: %d\n",this->collisions);
 
@@ -302,7 +303,7 @@ void SBF::PrintFilter(int mode)
 
     printf("\nEmersion, Fpp, Isep:\n");
     for(int j = 1; j < this->AREA_number+1; j++){
-        printf("Area %d: expected emersion %.5f, emersion %.5f, a-priori fpp %.5f, fpp %.5f, a-priori isep %.5f, expected ise %.5f, isep %.5f",j,this->GetExpectedAreaEmersion(j),this->GetAreaEmersion(j),this->AREA_a_priori_fpp[j],this->AREA_fpp[j],this->AREA_a_priori_isep[j], this->AREA_a_priori_isep[j]*this->AREA_members[j], this->AREA_isep[j]);
+        printf("Area %d: expected emersion %.5f, emersion %.5f, a-priori fpp %.5f, fpp %.5f, a-priori isep %.5f, expected ise %.5f, isep %.5f, a-priori safep %.5f",j,this->GetExpectedAreaEmersion(j),this->GetAreaEmersion(j),this->AREA_a_priori_fpp[j],this->AREA_fpp[j],this->AREA_a_priori_isep[j], this->AREA_a_priori_isep[j]*this->AREA_members[j], this->AREA_isep[j], this->AREA_a_priori_safep[j]);
         printf("\n");
     }
     printf("\n");
@@ -335,11 +336,12 @@ void SBF::SaveToDisk(std::string path, int mode)
         myfile << "sparsity" << ";" << this->GetFilterSparsity() << std::endl;
 		myfile << "a-priori fpp" << ";" << this->GetFilterAPrioriFpp() << std::endl;
         myfile << "fpp" << ";" << this->GetFilterFpp() << std::endl;
+		myfile << "a-priori safeness probability" << ";" << this->safeness << std::endl;
         // area-related parameters:
-        // area,members,expected cells,self-collisions,cells,expected emersion,emersion,a-priori fpp,fpp,a-priori isep,expected ise,isep
-		myfile << "area" << ";" << "members" << ";" << "expected cells" << ";" << "self-collisions" << ";" << "cells" << ";" << "expected emersion" << ";" << "emersion" << ";" << "a-priori fpp" << ";" << "fpp" << ";" << "a-priori isep" << ";" << "expected ise" << ";" << "isep" << std::endl;
+        // area,members,expected cells,self-collisions,cells,expected emersion,emersion,a-priori fpp,fpp,a-priori isep,expected ise,isep,a-priori safep
+		myfile << "area" << ";" << "members" << ";" << "expected cells" << ";" << "self-collisions" << ";" << "cells" << ";" << "expected emersion" << ";" << "emersion" << ";" << "a-priori fpp" << ";" << "fpp" << ";" << "a-priori isep" << ";" << "expected ise" << ";" << "isep" << ";" << "a-priori safep" << std::endl;
         for(int j = 1; j < this->AREA_number+1; j++){
-			myfile << j << ";" << this->AREA_members[j] << ";" << this->AREA_expected_cells[j] << ";" << this->AREA_self_collisions[j] << ";" << this->AREA_cells[j] << ";" << this->GetExpectedAreaEmersion(j) << ";" << this->GetAreaEmersion(j) << ";" << this->AREA_a_priori_fpp[j] << ";" << this->AREA_fpp[j] << ";" << this->AREA_a_priori_isep[j] << ";" << (float)this->AREA_members[j] * this->AREA_a_priori_isep[j] << ";" << (float)this->AREA_isep[j] << std::endl;
+			myfile << j << ";" << this->AREA_members[j] << ";" << this->AREA_expected_cells[j] << ";" << this->AREA_self_collisions[j] << ";" << this->AREA_cells[j] << ";" << this->GetExpectedAreaEmersion(j) << ";" << this->GetAreaEmersion(j) << ";" << this->AREA_a_priori_fpp[j] << ";" << this->AREA_fpp[j] << ";" << this->AREA_a_priori_isep[j] << ";" << (float)this->AREA_members[j] * this->AREA_a_priori_isep[j] << ";" << (float)this->AREA_isep[j] << ";" << this->AREA_a_priori_safep[j] << std::endl;
         }
 
     }
@@ -489,11 +491,14 @@ int SBF::Check(char *string, int size)
 
 
 // Computes a-priori area-specific inter-set error probability (a_priori_isep)
+// Computes a-priori area-specific safeness probability (a_priori_safep) and
+// the overall safeness probability for the entire filter
 void SBF::SetAPrioriAreaIsep()
 {
-	double p;
+	double p1, p2, p3;
 	int nfill;
 
+	p3 = 1;
 
 	for (int i = this->AREA_number; i>0; i--) {
 		nfill = 0;
@@ -502,13 +507,22 @@ void SBF::SetAPrioriAreaIsep()
 			nfill += this->AREA_members[j];
 		}
 
-		p = (double)(1 - 1 / (double)this->cells);
-		p = (double)(1 - (double)pow(p, this->HASH_number*nfill));
-		p = (double)pow(p, this->HASH_number);
+		p1 = (double)(1 - 1 / (double)this->cells);
+		p1 = (double)(1 - (double)pow(p1, this->HASH_number*nfill));
+		p1 = (double)pow(p1, this->HASH_number);
 
-		this->AREA_a_priori_isep[i] = (float)p;
+		p2 = (double)(1 - p1);
+		p2 = (double)pow(p2, this->AREA_members[i]);
+
+		p3 *= p2;
+
+		this->AREA_a_priori_isep[i] = (float)p1;
+		this->AREA_a_priori_safep[i] = (float)p2;
 		
 	}
+
+	this->safeness = (float)p3;
+
 }
 
 
