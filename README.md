@@ -28,7 +28,7 @@ The SBFs have been proposed in the following research papers:
 ## Authors ##
 Luca Calderoni, Dario Maio - University of Bologna (Italy)
 
-Paolo Palmieri - Cranfield University (UK)
+Paolo Palmieri - University College Cork (Ireland)
 
 ## License ##
 The source code is released under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. Please refer to the included files [COPYING](COPYING) and [COPYING.LESSER](COPYING.LESSER).
