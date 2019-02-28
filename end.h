@@ -26,14 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdint.h>
 
-int is_big_endian(void)
-{
-	union {
-		uint32_t i;
-		char c[4];
-	} bi = { 0x01020304 };
+namespace sbf {
 
-	return bi.c[0] == 1;
-}
+int is_big_endian(void);
+
+} //namespace sbf
 
 #endif /* END_H */
