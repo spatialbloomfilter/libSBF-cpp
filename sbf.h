@@ -81,11 +81,11 @@ namespace sbf {
 
 		// Private methods (commented in the sbf.cpp)
 		void SetCell(unsigned int index, int area);
-		int GetCell(unsigned int index);
+		int GetCell(unsigned int index) const;
 		void CreateHashSalt(std::string path);
 		void LoadHashSalt(std::string path);
 		void SetHashDigestLength();
-		void Hash(char *d, size_t n, unsigned char *md);
+		void Hash(char *d, size_t n, unsigned char *md) const;
 
 
 	public:
@@ -226,21 +226,21 @@ namespace sbf {
 
 
 		// Public methods (commented in the sbf.cpp)
-		void PrintFilter(int mode);
+		void PrintFilter(int mode) const;
 		void SaveToDisk(std::string path, int mode);
 		void Insert(char *string, int size, int area);
-		int Check(char *string, int size);
-		int GetAreaMembers(int area);
-		float GetFilterSparsity();
-		float GetFilterFpp();
-		float GetFilterAPrioriFpp();
+		int Check(char *string, int size) const;
+		int GetAreaMembers(int area) const;
+		float GetFilterSparsity() const;
+		float GetFilterFpp() const;
+		float GetFilterAPrioriFpp() const;
 		void SetAreaFpp();
 		void SetAPrioriAreaFpp();
 		void SetAreaIsep();
 		void SetAPrioriAreaIsep();
 		void SetExpectedAreaCells();
-		float GetExpectedAreaEmersion(int area);
-		float GetAreaEmersion(int area);
+		float GetExpectedAreaEmersion(int area) const;
+		float GetAreaEmersion(int area) const;
 	};
 
 } //namespace sbf
