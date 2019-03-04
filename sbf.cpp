@@ -61,7 +61,7 @@ void SBF::SetHashDigestLength()
 // char *d            is the input of the hash value
 // size_t n           is the input length
 // unsigned char *md  is where the output should be written
-void SBF::Hash(char *d, size_t n, unsigned char *md)
+void SBF::Hash(char *d, size_t n, unsigned char *md) const
 {
     switch(this->HASH_family){
         case 1:
@@ -222,7 +222,7 @@ void SBF::SetCell(unsigned int index, int area)
 
 
 // Returns the area label stored at the specified index
-int SBF::GetCell(unsigned int index)
+int SBF::GetCell(unsigned int index) const
 {
     int area;
     switch (this->cell_size){
@@ -251,7 +251,7 @@ int SBF::GetCell(unsigned int index)
 // Prints the filter and related statistics to the standart output
 // mode: 0    prints SBF stats only
 // mode: 1    prints SBF information and the full SBF content
-void SBF::PrintFilter(int mode)
+void SBF::PrintFilter(int mode) const
 {
     int potential_elements;
 
@@ -432,7 +432,7 @@ void SBF::Insert(char *string, int size, int area)
 // belongs to a set, 0 otherwise.
 // char *string     the element to be verified
 // int size         length of the element
-int SBF::Check(char *string, int size)
+int SBF::Check(char *string, int size) const
 {
     char* buffer = new char[size];
     int area = 0;
@@ -622,14 +622,14 @@ void SBF::SetAreaFpp()
 
 
 // Returns the number of inserted elements for the input area
-int SBF::GetAreaMembers(int area)
+int SBF::GetAreaMembers(int area) const
 {
 	return this->AREA_members[area];
 }
 
 
 // Returns the sparsity of the entire SBF
-float SBF::GetFilterSparsity()
+float SBF::GetFilterSparsity() const
 {
     float ret;
     int sum = 0;
@@ -644,7 +644,7 @@ float SBF::GetFilterSparsity()
 
 // Returns the a-priori false positive probability over the entire filter
 // (i.e. not area-specific)
-float SBF::GetFilterAPrioriFpp()
+float SBF::GetFilterAPrioriFpp() const
 {
 	double p;
 	
@@ -658,7 +658,7 @@ float SBF::GetFilterAPrioriFpp()
 
 // Returns the a-posteriori false positive probability over the entire filter
 // (i.e. not area-specific)
-float SBF::GetFilterFpp()
+float SBF::GetFilterFpp() const
 {
 	double p;
     int c = 0;
@@ -675,7 +675,7 @@ float SBF::GetFilterFpp()
 
 
 // Returns the expected emersion value for the input area
-float SBF::GetExpectedAreaEmersion(int area)
+float SBF::GetExpectedAreaEmersion(int area) const
 {
 	double p;
 	int nfill = 0;
@@ -692,7 +692,7 @@ float SBF::GetExpectedAreaEmersion(int area)
 
 
 // Returns the emersion value for the input area
-float SBF::GetAreaEmersion(int area)
+float SBF::GetAreaEmersion(int area) const
 {
     float ret, a, b;
     if((this->AREA_members[area]==0) || (this->HASH_number==0)) ret = -1;
