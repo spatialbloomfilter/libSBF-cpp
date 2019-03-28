@@ -251,7 +251,7 @@ int SBF::GetCell(unsigned int index) const
 // Prints the filter and related statistics to the standart output
 // mode: 0    prints SBF stats only
 // mode: 1    prints SBF information and the full SBF content
-void SBF::PrintFilter(int mode) const
+void SBF::PrintFilter(const int mode) const
 {
     int potential_elements;
 
@@ -313,7 +313,7 @@ void SBF::PrintFilter(int mode) const
 // Prints the filter and related statistics onto a CSV file (path)
 // mode: 1    writes SBF metadata (CSV: key;value)
 // mode: 0    writes SBF cells (CSV: value)
-void SBF::SaveToDisk(std::string path, int mode)
+void SBF::SaveToDisk(const std::string path, int mode)
 {
     std::ofstream myfile;
 
@@ -375,7 +375,7 @@ void SBF::SaveToDisk(std::string path, int mode)
 // char *string     element to be mapped
 // int size         length of the element
 // int area         the area label
-void SBF::Insert(char *string, int size, int area)
+void SBF::Insert(const char *string, const int size, const int area)
 {
     char* buffer = new char[size];
 
@@ -432,7 +432,7 @@ void SBF::Insert(char *string, int size, int area)
 // belongs to a set, 0 otherwise.
 // char *string     the element to be verified
 // int size         length of the element
-int SBF::Check(char *string, int size) const
+int SBF::Check(const char *string, const int size) const
 {
     char* buffer = new char[size];
     int area = 0;
@@ -622,7 +622,7 @@ void SBF::SetAreaFpp()
 
 
 // Returns the number of inserted elements for the input area
-int SBF::GetAreaMembers(int area) const
+int SBF::GetAreaMembers(const int area) const
 {
 	return this->AREA_members[area];
 }
@@ -675,7 +675,7 @@ float SBF::GetFilterFpp() const
 
 
 // Returns the expected emersion value for the input area
-float SBF::GetExpectedAreaEmersion(int area) const
+float SBF::GetExpectedAreaEmersion(const int area) const
 {
 	double p;
 	int nfill = 0;
@@ -692,7 +692,7 @@ float SBF::GetExpectedAreaEmersion(int area) const
 
 
 // Returns the emersion value for the input area
-float SBF::GetAreaEmersion(int area) const
+float SBF::GetAreaEmersion(const int area) const
 {
     float ret, a, b;
     if((this->AREA_members[area]==0) || (this->HASH_number==0)) ret = -1;
