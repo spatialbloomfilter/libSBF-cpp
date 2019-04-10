@@ -226,11 +226,11 @@ namespace sbf {
 
 
 		// Public methods (commented in the sbf.cpp)
-		void PrintFilter(int mode) const;
-		void SaveToDisk(std::string path, int mode);
-		void Insert(char *string, int size, int area);
-		int Check(char *string, int size) const;
-		int GetAreaMembers(int area) const;
+		void PrintFilter(const int mode) const;
+		void SaveToDisk(const std::string path, int mode);
+		void Insert(const char *string, const int size, const int area);
+		int Check(const char *string, const int size) const;
+		int GetAreaMembers(const int area) const;
 		float GetFilterSparsity() const;
 		float GetFilterFpp() const;
 		float GetFilterAPrioriFpp() const;
@@ -239,8 +239,8 @@ namespace sbf {
 		void SetAreaIsep();
 		void SetAPrioriAreaIsep();
 		void SetExpectedAreaCells();
-		float GetExpectedAreaEmersion(int area) const;
-		float GetAreaEmersion(int area) const;
+		float GetExpectedAreaEmersion(const int area) const;
+		float GetAreaEmersion(const int area) const;
 	};
 
 } //namespace sbf
